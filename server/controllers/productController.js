@@ -56,9 +56,28 @@ const deleteProduct = async(req, res) => {
     }
 };
 
+const searchProducts = async(req, res) => {
+    const {searchTerm} = req.query;
+
+    try {
+        const products = await Product.find({
+            $or: [
+                {description: {$regex: searchTerm, $options: 'i'}},                
+                {brand: {$regex: searchTerm, $options: 'i'}},
+                {color: {$regex: searchTerm, $options: 'i'}}
+            ]
+        });
+        res.json({products});
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({error: "An error occured during search."})
+    }
+}
+
 module.exports = {
     getAllProducts,
     getProductById,
     createProduct,
-    deleteProduct
+    deleteProduct,
+    searchProducts
 }
