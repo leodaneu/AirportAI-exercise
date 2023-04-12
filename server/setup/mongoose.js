@@ -6,14 +6,12 @@
 let mongoose = require('mongoose');
 const DATABASE_URL = 'mongodb://127.0.0.1:27017/AirportAI';
 
-
 module.exports = setup;
 
 /**
 * Sets up MongoDB connection.
 */
 function setup() {
-
   mongoose.connection.on('connected', function () {
     console.log('MongoDB connected to database.');
   });
@@ -38,11 +36,18 @@ function setup() {
   return connectToDb().then(function() {
 
     // Set up all models.
-    require('../models');
+    const {User, Produt} = require('../models');
+
+    const newUser = new User({userId: 1, name: "Leonardo Lopes", email: "leonardolopes@example.com", password: "112233" ,role: "agent"});
+    newUser.save().then(user => {
+      console.log("User created succesfully")
+    })
+    .catch(error => {
+      console.error("Error creating user:", error);
+    });
     return;
   });
 };
-
 
 /**
 * Connects to the database.

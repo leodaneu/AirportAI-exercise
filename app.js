@@ -2,8 +2,9 @@
 * App entrypoint.
 */
 'use strict';
+const express = require('express');
 
-let app = require('express')();
+let app = express();
 const PORT = 3000;
 
 // Set up Express.
@@ -13,7 +14,13 @@ require('./server/setup/express')(app);
 require('./server/setup/mongoose')();
 
 // Set up routes.
-app.use('/', require('./server/routes'));
+//const userRoutes = require('./server/routes/users');
+//const productRoutes = require('./server/routes/products');
+const routes = require('./server/routes');
+
+//app.use('/users', userRoutes);
+//app.use('/products', productRoutes);
+app.use('/', routes);
 
 // Start app.
 app.listen(PORT, function() {

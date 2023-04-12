@@ -2,5 +2,7 @@
 * DB models.
 */
 'use strict';
+const User = require('./user');
+const Product = require('./product');
 
-module.exports = {};
+module.exports = {User, Product};
