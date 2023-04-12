@@ -9,6 +9,9 @@ router.get('/products', productController.getAllProducts);
 // Search for Products
 router.get('/products/search', productController.searchProducts);
 
+// Search for Products
+router.get('/products/search/date', productController.searchProductsByDate);
+
 // Get Product by id
 router.get('/products/:productId', productController.getProductById);
 

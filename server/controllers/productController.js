@@ -74,10 +74,27 @@ const searchProducts = async(req, res) => {
     }
 }
 
+// Search Products by date range
+const searchProductsByDate = async(req, res) => {
+    const startDate = req.query.startDate;
+    const endDate = req.query.endDate;
+
+    try {
+        const products = await Product.find({    
+            lostTime: {$gte: startDate, $lte: endDate}            
+        });
+        res.json({products});
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({error: "An error occured during search."})
+    }
+}
+
 module.exports = {
     getAllProducts,
     getProductById,
     createProduct,
     deleteProduct,
-    searchProducts
+    searchProducts,
+    searchProductsByDate
 }

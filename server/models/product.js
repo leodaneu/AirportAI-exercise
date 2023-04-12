@@ -10,8 +10,6 @@ const productSchema = new Schema({
     lostTime: {type: Date, default: Date.now}
 });
 
-//
-
 // Auto increment the product id
 productSchema.pre('save', async function(next) {
     const product = this;
