@@ -38,7 +38,7 @@ function setup() {
     // Set up all models.
     const {User, Produt} = require('../models');
 
-    const newUser = new User({userId: 1, name: "Leonardo Lopes", email: "leonardolopes@example.com", password: "112233" ,role: "agent"});
+    const newUser = new User({userId: 1, username: "leonardo_lopes", name: "Leonardo Lopes", email: "leonardolopes@example.com", password: "112233" ,role: "agent"});
     newUser.save().then(user => {
       console.log("User created succesfully")
     })
