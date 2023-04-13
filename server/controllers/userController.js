@@ -5,11 +5,11 @@ const bcrypt = require('bcrypt');
 
 dotenv.config();
 
-const login = (req, res) => {
+const userLogin = async (req, res, next) => {
     const {username, password} = req.body;
 
     try {
-        User.findOne({username}, (err, user) => {
+        User.findOne({username}).then((user, err) => {
             if (err) {
                 return res.status(500).json({message: 'Internal server error'});
             }
@@ -18,15 +18,17 @@ const login = (req, res) => {
                 return res.status(400).json({message: 'Invalid username or password'});
             }
     
-            if (user.password === password) {
-                const token = jwt.sign({id: user.userId}, process.env.JWT_SECRET_KEY, {expiresIn: '1h'});
-                res.json({token});
-            } else {
-                res.status(401).json({message: 'Invalid username or password'});
-            }
-    
-            const token = jwt.sign({id: user.userId, username: user.username}, process.env.JWT_SECRET_KEY, {expiresIn: '2h'});
-    
+            const passworMatch = bcrypt.compare(password, user.password);
+
+            if (!passworMatch) {
+                return res.status(401).json({message: 'Invalid username or password'});
+            }          
+                
+            const token = jwt.sign({
+                id: user.userId, 
+                role: user.role
+            }, process.env.JWT_SECRET_KEY, {expiresIn: '1h'});            
+            
             res.status(200).json({message: 'User logged in succesfully', token});
         });
     } catch(err) {
@@ -34,8 +36,7 @@ const login = (req, res) => {
     }
 };
 
-const register = async(req, res) => { 
-    
+const register = async(req, res) => {     
     const {userId, username, name, email, password, role} = req.body;
 
     bcrypt.genSalt(10, (err, salt) => {
@@ -52,7 +53,10 @@ const register = async(req, res) => {
     
             newUser.save()
                 .then((user) => {
-                    const token = jwt.sign({userId: user.userId}, process.env.JWT_SECRET_KEY, {expiresIn: '1h'});
+                    const token = jwt.sign({
+                        userId: user.userId, 
+                        role: user.role
+                    }, process.env.JWT_SECRET_KEY, {expiresIn: '1h'});
                     res.status(201).json({message: 'User registered succesfully', token});
                 })
                 .catch((error) => {
@@ -106,7 +110,7 @@ const deleteUser = async(req, res) => {
 };
 
 module.exports = {
-    login,
+    userLogin,
     register,
     getAllUsers,
     getUserById,
