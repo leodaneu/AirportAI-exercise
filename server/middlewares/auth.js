@@ -2,13 +2,12 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 
 dotenv.config();
+// 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
 
 const checkUserRole = (allowedRoles) => {
     return (req, res, next) => {
         // This is to extract the "Bearer" string and get olny the token
-        console.log(req);
-        const token = req.headers.authorization.split(' ')[1];
-        console.log(token)
+        const token = req.headers.authorization.split(' ')[1];        
 
         jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decoded) => {
             if (err) {

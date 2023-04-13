@@ -4,6 +4,8 @@
 'use strict';
 
 let mongoose = require('mongoose');
+let fs = require('fs');
+const UserController = require('../controllers/userController');
 const DATABASE_URL = 'mongodb://127.0.0.1:27017/AirportAI';
 
 module.exports = setup;
@@ -36,22 +38,36 @@ function setup() {
   return connectToDb().then(function() {
 
     // Set up all models.
-    const {User, Produt} = require('../models');
+    // Creates users when initializing the project
+    const {User, Product} = require('../models');
 
-    const newUser = new User(
-      {
-        userId: 1, 
-        username: "leonardo_lopes", 
-        name: "Leonardo Lopes", 
-        email: "leonardolopes@example.com", 
-        password: "112233", 
-        role: "agent"
-      });
-    newUser.save().then(user => {
-      console.log("User created succesfully")
-    })
-    .catch(error => {
-      console.error("Error creating user:", error);
+    const collectionData = fs.readFileSync('server/postman/postman_collection.json');
+    const collection = JSON.parse(collectionData);
+
+    collection.item.forEach(async (item) => {  
+      if(item.request.method === 'POST' && item.request.url.path[0] === 'register') {
+        const requestBody = JSON.parse(item.request.body.raw);
+
+        requestBody.forEach(async (userData) => {
+          console.log(userData)
+          
+          const newUser = new User({
+            userId: userData.userId,
+            username: userData.username,
+            name: userData.name,
+            email: userData.email,
+            password: userData.password,
+            role: userData.role,
+          })
+          try {
+            await UserController.register(userData)
+            console.log(`User created succesfully ${newUser.username}`)
+  
+          } catch(err) {
+            console.error(`Error creating user ${err}`);
+          }
+        }) 
+      }
     });
     return;
   });

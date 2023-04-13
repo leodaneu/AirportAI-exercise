@@ -16,6 +16,6 @@ router.get('/users', auth.checkUserRole(['agent']), userController.getAllUsers);
 router.get('/users/:userId', auth.checkUserRole(['agent']), userController.getUserById);
 
 // Delete User
-router.delete('users/:id', auth.checkUserRole(['agent']), userController.deleteUser);
+router.delete('/users/:userId', auth.checkUserRole(['agent']), userController.deleteUser);
 
 module.exports = router;

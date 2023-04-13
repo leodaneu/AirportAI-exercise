@@ -36,8 +36,9 @@ const userLogin = async (req, res, next) => {
     }
 };
 
-const register = async(req, res) => {     
-    const {userId, username, name, email, password, role} = req.body;
+const register = async(req, res) => {
+    //console.log(req)     
+    const {userId, username, name, email, password, role} = req;
 
     bcrypt.genSalt(10, (err, salt) => {
         if (err) {
@@ -60,7 +61,8 @@ const register = async(req, res) => {
                     res.status(201).json({message: 'User registered succesfully', token});
                 })
                 .catch((error) => {
-                    res.status(500).json({error: error.message});
+                    console.error(error)
+                    //res.status(500).json({message: 'Failed to resgister User', error: error});
                 });
         });
     });
@@ -95,8 +97,11 @@ const getUserById = async(req, res) => {
 };
 
 const deleteUser = async(req, res) => {
+    console.log(req.params.userId)
+    console.log(req.params)
+ 
     try {
-        const deletedUser = await User.findByIdAndDelete(req.params.id);
+        const deletedUser = await User.findOneAndDelete(req.params.userId);
 
         if (!deletedUser) {
             return res.status(404).json({error: 'User not found'});
